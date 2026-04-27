@@ -66,26 +66,26 @@ pipeline {
     //   }
     // }
 
-    stage('Deploy to Kubernetes') {
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'aws-creds', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-          sh 'aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}'
-        }
-        dir('k8s') {
-          sh 'kubectl apply -f secret-db.yaml'
-          sh 'kubectl apply -f alert-watcher.yaml'
-          sh 'kubectl apply -f fastapi-deployment.yaml'
-          sh 'kubectl apply -f fastapi-service.yaml'
-          sh 'kubectl apply -f nodejs-deployment.yaml'
-          sh 'kubectl apply -f nodejs-service.yaml'
-          sh 'kubectl apply -f worker-deployment.yaml'
-          sh 'kubectl apply -f worker-service.yaml'
-          sh 'kubectl apply -f fastapi-hpa.yaml'
-          sh 'kubectl apply -f nodejs-hpa.yaml'
-        }
-      }
-    }
-  }
+  //   stage('Deploy to Kubernetes') {
+  //     steps {
+  //       withCredentials([usernamePassword(credentialsId: 'aws-creds', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+  //         sh 'aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}'
+  //       }
+  //       dir('k8s') {
+  //         sh 'kubectl apply -f secret-db.yaml'
+  //         sh 'kubectl apply -f alert-watcher.yaml'
+  //         sh 'kubectl apply -f fastapi-deployment.yaml'
+  //         sh 'kubectl apply -f fastapi-service.yaml'
+  //         sh 'kubectl apply -f nodejs-deployment.yaml'
+  //         sh 'kubectl apply -f nodejs-service.yaml'
+  //         sh 'kubectl apply -f worker-deployment.yaml'
+  //         sh 'kubectl apply -f worker-service.yaml'
+  //         sh 'kubectl apply -f fastapi-hpa.yaml'
+  //         sh 'kubectl apply -f nodejs-hpa.yaml'
+  //       }
+  //     }
+  //   }
+  // }
 
   post {
     always {
