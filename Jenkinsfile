@@ -32,22 +32,22 @@ pipeline {
       }
     }
 
-    stage('Push Images') {
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'docker-registry-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-          sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin ${ECR_REPO}'
-        }
-        sh 'docker push ${ECR_REPO}:fastapi-${IMAGE_TAG}'
-        sh 'docker push ${ECR_REPO}:nodejs-${IMAGE_TAG}'
-        sh 'docker push ${ECR_REPO}:worker-${IMAGE_TAG}'
-        sh 'docker push ${ECR_REPO}:alert-watcher-${IMAGE_TAG}'
-      }
-    }
+    // stage('Push Images') {
+    //   steps {
+    //     withCredentials([usernamePassword(credentialsId: 'docker-registry-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+    //       sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin ${ECR_REPO}'
+    //     }
+    //     sh 'docker push ${ECR_REPO}:fastapi-${IMAGE_TAG}'
+    //     sh 'docker push ${ECR_REPO}:nodejs-${IMAGE_TAG}'
+    //     sh 'docker push ${ECR_REPO}:worker-${IMAGE_TAG}'
+    //     sh 'docker push ${ECR_REPO}:alert-watcher-${IMAGE_TAG}'
+    //   }
+    // }
 
     stage('Terraform Init & Plan') {
       steps {
         dir('terraform') {
-          withCredentials([usernamePassword(credentialsId: 'aws-creds', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+          withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS-cred', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
             sh 'terraform init'
             sh 'terraform plan -out=tfplan'
           }
@@ -55,16 +55,16 @@ pipeline {
       }
     }
 
-    stage('Terraform Apply') {
-      steps {
-        dir('terraform') {
-          withCredentials([usernamePassword(credentialsId: 'aws-creds', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-            input message: 'Approve Terraform apply?'
-            sh 'terraform apply -auto-approve tfplan'
-          }
-        }
-      }
-    }
+    // stage('Terraform Apply') {
+    //   steps {
+    //     dir('terraform') {
+    //       withCredentials([usernamePassword(credentialsId: 'aws-creds', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+    //         input message: 'Approve Terraform apply?'
+    //         sh 'terraform apply -auto-approve tfplan'
+    //       }
+    //     }
+    //   }
+    // }
 
     stage('Deploy to Kubernetes') {
       steps {
