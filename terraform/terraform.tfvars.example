@@ -1,0 +1,9 @@
+db_password = "base64password"
+aws_region = "ap-south-1"
+cluster_name = "app-eks-cluster"
+cluster_version = "1.28"
+node_group_name = "app-node-group"
+node_group_instance_type = "t2.medium"
+node_group_desired_capacity = 2
+node_group_min_size = 2
+node_group_max_size = 4
